@@ -3,7 +3,7 @@ const express = require('express');
 const app = express();
 const axios = require('axios');
 const { totalmem } = require('os');
-const port = 5000;
+const port = 80;
 app.get('/', (req, res) => {
   res.sendFile('index.html', { root: path.join(__dirname) });
 });
