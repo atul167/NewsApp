@@ -1,14 +1,47 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" >
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>News App</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <link href="custom.css" rel="stylesheet">
+    <link rel="stylesheet" href="custom.css" >
   </head>
   <body>
+    
+</head>
+<style>
+  /* Dark mode styles */
+  .dark-mode {
+      background-color: #333;
+      color: #fff;
+      /* Add more dark mode styles here */
+  }
+</style>
+<body>
+  <!-- Your page content here -->
+
+  <!-- Dark mode toggle button -->
+  <div class="dark-mode-toggle">
+      <label for="dark-mode-switch">Dark Mode</label>
+      <input type="checkbox" id="dark-mode-switch">
+  </div>
+
+  <script>
+      // JavaScript code to toggle dark mode
+      const darkModeSwitch = document.getElementById('dark-mode-switch');
+
+      darkModeSwitch.addEventListener('change', () => {
+          if (darkModeSwitch.checked) {
+              // Enable dark mode
+              document.body.classList.add('dark-mode');
+          } else {
+              // Disable dark mode
+              document.body.classList.remove('dark-mode');
+          }
+      });
+  </script>
 <!-- Used from https://getbootstrap.com/docs/5.3/components/navbar/ -->
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <div class="container-fluid">
@@ -40,6 +73,7 @@
           <li class="nav-item">
             <a class="nav-link" href="/About">About</a>
           </li>
+          
         <form class="d-flex" role="search">
           <input class="form-control me-2" name="query" type="search" placeholder="Search" aria-label="Search">
           <input class="form-control me-2" name="pageno" type="hidden" value="1" placeholder="Search" aria-label="Search">
@@ -51,13 +85,14 @@
   <div class="container mx-auto">
     <div id="content" class="row">
       <!-- Bootstraped the cards from https://getbootstrap.com/docs/5.3/components/card/-->
-      <div class="card" style="width: 20rem;">
-        <img src="..." class="card-img-top" alt="...">
+      <div class="card rounded-circle" style="width: 20rem; background-color: rgb(202, 225, 234);">
+        <img src="..." class="card-img-top rounded-circle" alt="...">
         <div class="card-body">
           <h5 class="card-title">Card title</h5>
           <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-          <a href="#" class="btn btn-primary">Go somewhere</a>
+          <a href="#" class="btn btn-primary rounded-circle">Go somewhere</a>
         </div>
+      </div>
       </div>
     </div></div>
   
@@ -83,26 +118,39 @@
   //https://newsapi.org/docs/endpoints/everything
 
   console.log(query,pg); 
-  const fetchthenews=async (query,pg)=>{
-    let a=await fetch(`/api?q=${query}&apiKey=fd20bc7385ac4a54a6b493756c6ac01e&pageSize=20&page=${pg}`);
-    let r=await a.json()
-    pre.href=`/?q=${query}&pageno=${pg-1}`;
-    next.href = `/?q=${query}&pageno=${pg+1}`;
-    let p="";
-    for (var x of r.articles){
-      // console.log(x);
-         p=p+ ` <div class="card" style="width: 18rem;">
-        <img src="${x.urlToImage}" class="card-img-top" alt="...">
-        <div class="card-body">
-          <h5 class="card-title">${x.title}</h5>
-          <p class="card-text">${x.description}</p>
-          <a href="${x.url}" class="btn btn-primary">Read news...</a>
-        </div>
-      </div>`
+  const fetchthenews = async (query, pg) => {
+    try {
+        let response = await fetch(`/api?q=${query}&apiKey=1995e53f5f5246e8b13e06111a08e7f1&pageSize=20&page=${pg}`);
+        let data = await response.json();
+
+        // Update pagination links
+        pre.href = `/?q=${query}&pageno=${pg - 1}`;
+        let nextPage = parseInt(pg) + 1;
+        next.href = `/?q=${query}&pageno=${nextPage}`;
+
+        // Display articles
+        let articlesHTML = '';
+        for (let article of data.articles) {
+            articlesHTML += `
+                <div class="card" style="width: 20rem; background-color: rgb(202, 225, 234);">
+                    <img src="${article.urlToImage}" class="card-img-top rounded-circle" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title">${article.title}</h5>
+                        <p class="card-text">${article.description}</p>
+                        <a href="${article.url}" class="btn btn-primary">Read news...</a>
+                    </div>
+                </div>
+            `;
+        }
+        content.innerHTML = articlesHTML;
+    } catch (error) {
+        console.error('Error fetching news:', error);
     }
-    content.innerHTML=p;
-  }
-  fetchthenews(query,pg);
+};
+
+fetchthenews(query, pg);
+
+content.innerHTML = p;
  // after this function call , it shows result as follows:
  // {status: 'ok', totalResults: 40874, articles: Array(100)}
 </script>
